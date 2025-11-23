@@ -13,7 +13,7 @@ class memberController extends Controller
 {
     //
     public function dashboard(){
-        return view('membe.dashboard');
+        return view('member.dashboard');
     }
 
     public function produk()
@@ -26,7 +26,7 @@ class memberController extends Controller
                                 ->where('toko_id', $toko_id)
                                 ->get();
         $data['kategori'] = Kategori::all();
-        return view('membe.produk', $data);
+        return view('member.produk', $data);
     }
 
     public function store(Request $request)

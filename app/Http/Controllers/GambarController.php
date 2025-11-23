@@ -27,7 +27,7 @@ class GambarController extends Controller
 
     $produk = Produk::where('toko_id', $toko->id)->get();
 
-    return view('membe.gambar', compact('gambars', 'produk'));
+    return view('member.gambar', compact('gambars', 'produk'));
 }
 
     public function store(Request $request)

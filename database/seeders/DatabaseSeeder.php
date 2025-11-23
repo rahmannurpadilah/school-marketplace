@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'kurumi',
+            'name' => 'Admin',
             'kontak' => '0870779797',
             'username' => 'admin1',
             'role' => 'admin',
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Toko::create([
             'user_id' => 1,
-            'nama_toko' => 'Kurumi Store',
+            'nama_toko' => 'Kocak Store',
             'alamat' => 'Jl. Anggrek No. 23',
             'status' => 'active',
             'gambar' => 'public/storage/image/sekolah1.jpg',
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'kontak_toko' => '0870779797',
         ]);
         Kategori::create([
-            'nama_katgori' => 'Elektro'
+            'nama_kategori' => 'Elektro'
         ]);
     }
 }

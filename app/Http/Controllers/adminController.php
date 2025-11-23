@@ -14,11 +14,16 @@ use Illuminate\Support\Facades\Redirect;
 class adminController extends Controller
 {
     //
-    public function dashboard(){
+    public function dashboard()
+    {
         $data['users'] = User::count();
-        return view('admin.dashboard',$data);
+        $data['tokos'] = Toko::count();
+        $data['produks'] = Produk::count();
+
+        return view('admin.dashboard', $data);
     }
-    public function userA(){
+
+    public function userAdmin(){
         $data['users'] = User::all();
         return view('admin.useradmin',$data);
     }
@@ -53,7 +58,7 @@ class adminController extends Controller
         return redirect()->route('login');
     }
     public function regisview(){
-        return view('regis');
+        return view('registrasi');
     }
     public function register(Request $request){
         $request->validate([
