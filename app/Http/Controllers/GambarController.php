@@ -19,15 +19,15 @@ class GambarController extends Controller
     }
 
     $toko = $user->toko;
-    $gambars = Gambar::with('produk')
+    $data['gambars'] = Gambar::with('produk')
         ->whereHas('produk', function ($query) use ($toko) {
             $query->where('toko_id', $toko->id);
         })
         ->get();
 
-    $produk = Produk::where('toko_id', $toko->id)->get();
+    $data['produk'] = Produk::where('toko_id', $toko->id)->get();
 
-    return view('member.gambar', compact('gambars', 'produk'));
+    return view('member.gambar', $data);
 }
 
     public function store(Request $request)

@@ -98,12 +98,21 @@ class TokoController extends Controller
 
         return back()->with('success', 'Toko berhasil dihapus!');
     }
-    public function approve($id)
+    public function setujui($id)
     {
         $toko = Toko::findOrFail($id);
         $toko->status = 'active';
         $toko->save();
 
-        return redirect()->back()->with('success', 'Toko berhasil diapprove!');
+        return redirect()->back()->with('success', 'Toko berhasil disetujui!');
+    }
+
+        public function tolak($id)
+    {
+        $toko = Toko::findOrFail($id);
+        $toko->status = 'ditolak';
+        $toko->save();
+
+        return redirect()->back()->with('success', 'Toko berhasil ditolak!');
     }
 }

@@ -13,21 +13,50 @@ class memberController extends Controller
 {
     //
     public function dashboard(){
-        return view('member.dashboard');
+
+        $toko = Toko::where('user_id', Auth::id())->first();
+
+        if ($toko) {
+            $produk = Produk::where('toko_id', $toko->id)->get();
+
+            $gambarCount = Gambar::whereIn('produk_id', $produk->pluck('id'))->count();
+
+            $data['produk_count'] = $produk->count();
+            $data['gambar_count'] = $gambarCount;
+            $data['kategori_count'] = Kategori::count();
+
+        } else {
+            $data['produk_count'] = 0;
+            $data['gambar_count'] = 0;
+            $data['kategori_count'] = Kategori::count();
+        }
+
+        $data['toko'] = $toko;
+        return view('member.dashboard', $data);
     }
+
 
     public function produk()
     {
-        $toko_id = Auth::user()->Toko->id;
-        $data['gambars'] = Gambar::whereHas('produk', function ($query) use ($toko_id) {
-                                    $query->where('toko_id', $toko_id);
-                                })->get();
-        $data['produks'] = Produk::with('Gambar')
-                                ->where('toko_id', $toko_id)
-                                ->get();
+        $toko = Toko::where('user_id', Auth::user()->id)->first();
+
+        if (!$toko) {
+            return back()->with('error', 'Toko tidak ditemukan!');
+        }
+
+        $data['gambars'] = Gambar::whereHas('produk', function ($query) use ($toko) {
+            $query->where('toko_id', $toko->id);
+        })->get();
+
+        $data['produks'] = Produk::with('gambar')
+            ->where('toko_id', $toko->id)
+            ->get();
+
         $data['kategori'] = Kategori::all();
+
         return view('member.produk', $data);
     }
+
 
     public function store(Request $request)
     {

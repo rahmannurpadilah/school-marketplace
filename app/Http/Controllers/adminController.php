@@ -74,7 +74,7 @@ class adminController extends Controller
             'role' => 'member',
             'password' => bcrypt($request->password),
         ]);
-        return redirect()->route('login')->with('succsess','registrasi berhasil,silahkan login');
+        return redirect()->route('login')->with('success','registrasi berhasil,silahkan login');
     }
     public function addmember(Request $request){
         $request->validate([
@@ -91,20 +91,37 @@ class adminController extends Controller
             'role' => $request->role,
             'password' => bcrypt($request->password),
         ]);
-        return redirect()->back()->with('succsess','member berhasil di tambah');
+        return redirect()->back()->with('success','member berhasil di tambah');
     }
     public function updateMember(Request $req)
     {
-    User::where('id', $req->id)->update([
-        'name' => $req->name,
-        'kontak' => $req->kontak,
-        'username' => $req->username,
-        'password' => bcrypt($req->password),
-        'role' => $req->role,
-    ]);
+        // VALIDASI
+        $req->validate([
+            'name' => 'required|string|max:255',
+            'kontak' => 'required|string|max:15',
+            'username' => 'required|string|max:255|unique:users,username,' . $req->id,
+            'password' => 'nullable|string', 
+            'role' => 'required'
+        ]);
 
-        return back()->with('succsess','Member berhasil diperbarui!');
+        // AMBIL DATA USER
+        $user = User::findOrFail($req->id);
+
+        // JIKA PASSWORD KOSONG → tetap pakai password lama
+        $password = $req->password ? bcrypt($req->password) : $user->password;
+
+        // UPDATE
+        $user->update([
+            'name' => $req->name,
+            'kontak' => $req->kontak,
+            'username' => $req->username,
+            'password' => $password,
+            'role' => $req->role,
+        ]);
+
+        return back()->with('success', 'Member berhasil diperbarui!');
     }
+
     public function deleteMember($id)
     {
         Gambar::whereHas('produk', function ($query) use ($id) {
@@ -114,7 +131,7 @@ class adminController extends Controller
         Toko::where('user_id',$id)->delete();
         User::find($id)->delete();
 
-        return back()->with('succsess','Member berhasil dihapus!');
+        return back()->with('success','Member berhasil dihapus!');
     }
     public function edit($id)
     {
