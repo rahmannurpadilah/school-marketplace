@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use App\Models\Produk;
 use App\Models\Toko;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -19,6 +21,7 @@ class UserController extends Controller
 
         $data['produks'] = Produk::with(['toko', 'kategori', 'Gambar'])
             ->latest()
+            ->take(8)
             ->get();
         return view('user.home', $data);
     }
@@ -54,6 +57,35 @@ class UserController extends Controller
         $data['tokos'] = $query->latest()->get();
 
         return view('user.toko', $data);
+    }
+
+    public function detailtoko($id){
+        try {
+            $id = Crypt::decrypt($id);
+        } catch (DecryptException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        $data['toko'] = Toko::findOrFail($id);
+
+        $data['produk'] = Produk::with('Gambar')
+            ->where('toko_id', $id)
+            ->latest()
+            ->get();
+
+        return view('user.detailtoko', $data);
+    }
+
+    public function detailproduk($id){
+        $decryptId = Crypt::decrypt($id);
+
+        $produk = Produk::with(['Gambar', 'Kategori'])->findOrFail($decryptId);
+
+        $data['toko'] = Toko::find($produk->toko_id); // FIX
+        $data['produk'] = $produk;
+        $data['gambar'] = $produk->Gambar;
+
+        return view('user.produkdetail', $data);
     }
 
 

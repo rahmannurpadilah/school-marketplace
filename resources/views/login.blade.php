@@ -1,6 +1,6 @@
 @extends('layouts.global')
 
-@section('title', 'Admin Login')
+@section('title', 'Login')
 
 @section('content')
 <div class="flex items-center justify-center min-h-screen bg-background">
@@ -12,7 +12,7 @@
         "
     >
         <h1 class="text-3xl font-bold mb-6 text-center text-text-primary">
-            Admin Login
+            Login
         </h1>
 
         @if (session('succsess'))

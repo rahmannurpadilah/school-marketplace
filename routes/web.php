@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[UserController::class,'homepage'])->name('user.dashboard');
 Route::get('/produk', [UserController::class, 'produkpage'])->name('produk.index');
+Route::get('detail/produk/{id}', [UserController::class, 'detailproduk'])->name('detail.produk');
 Route::get('/toko', [UserController::class, 'tokopage'])->name('toko.index');
+Route::get('/detail/toko/{id}', [UserController::class, 'detailtoko'])->name('detail.toko');
 
 // Login, Regis, dan kawan-kawan
 Route::get('/login',[adminController::class,'loginView'])->name('login');
@@ -57,6 +59,7 @@ Route::middleware(['member'])->group(function(){
     Route::get('/logout/user',[adminController::class,'logout'])->name('logout.user');
 
     // Produk
+    Route::get('/member/produk/{id}/detail',[ProdukController::class,'detail'])->name('member.produk.detail');
     Route::post('/member/produk/store',[ProdukController::class,'store'])->name('produk.store');
     Route::get('/member/produk',[memberController::class,'produk'])->name('member.prodak');
     Route::put('member/produk/update',[ProdukController::class,'update'])->name('produk.update');
@@ -64,6 +67,7 @@ Route::middleware(['member'])->group(function(){
     Route::get('/member/gambar/',[GambarController::class,'index'])->name('member.gambar');
     Route::get('/member/gambar/delete/{id}',[GambarController::class,'delete'])->name('member.gambar.delete');
     Route::put('/member/gambar/update/{id}',[GambarController::class,'update'])->name('member.gambar.update');
+
     
     // Kategori
     Route::get('/member/kategori',[KategoriController::class,'index'])->name('member.kategori');

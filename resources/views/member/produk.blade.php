@@ -8,7 +8,6 @@
 
 <div class="bg-primary shadow-sm rounded-xl border border-border overflow-hidden">
 
-    {{-- ================== ALERT SUCCESS ================== --}}
     @if (session('success'))
     <div id="alertSuccess"
         class="flex items-center justify-between bg-green-500/20 text-green-700 border border-green-500 rounded-lg px-4 py-3 mb-4 animate-fade">
@@ -20,7 +19,6 @@
     </div>
     @endif
 
-    {{-- ================== ALERT ERROR ================== --}}
     @if (session('error'))
     <div id="alertError"
         class="flex items-center justify-between bg-red-500/20 text-red-600 border border-red-500 rounded-lg px-4 py-3 mb-4 animate-fade">
@@ -32,11 +30,8 @@
     </div>
     @endif
 
-
-    {{-- ================= SEARCH + ADD ================= --}}
     <div class="p-4 flex items-center gap-4 justify-between">
 
-        {{-- SEARCH --}}
         <div class="relative w-full max-w-md">
             <span class="absolute inset-y-0 left-3 flex items-center text-textPrimary/60">
                 <i data-lucide="search" class="w-4 h-4"></i>
@@ -50,7 +45,6 @@
             >
         </div>
 
-        {{-- BUTTON ADD PRODUK --}}
         @if ($toko && $toko->status == 'active')
         <button onclick="openAddProduk()"
             class="bg-secondary text-background px-4 py-2 rounded-lg text-sm hover:bg-secondary/90">
@@ -60,8 +54,6 @@
 
     </div>
 
-
-    {{-- ================= TABLE ================= --}}
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
 
@@ -88,7 +80,7 @@
                     <td class="px-6 py-4">
                         @if ($p->Gambar->count() > 0)
                             <div class="flex flex-wrap gap-1">
-                                @foreach ($p->Gambar->take(4) as $g)
+                                @foreach ($p->Gambar->take(1) as $g)
                                     <img src="{{ asset('storage/imageproduk/'.$g->path_gambar) }}"
                                         class="w-12 h-12 rounded object-cover border border-border">
                                 @endforeach
@@ -106,9 +98,16 @@
 
                     <td class="px-6 py-4">{{ $p->stok }}</td>
 
-                    <td class="px-6 py-4">{{ $p->kategori->nama_katgori }}</td>
+                    <td class="px-6 py-4">
+                        {{ $p->Kategori->nama_kategori ?? 'Tidak ada kategori' }}
+                    </td>
 
                     <td class="px-6 py-4 text-center">
+
+                        <a href="{{ route('member.produk.detail', ['id' => Crypt::encrypt($p->id)]) }}"
+                            class="text-green-500 hover:underline mr-3">
+                            Detail
+                        </a>
 
                         <button onclick="openEditProduk({{ $p->id }})"
                             class="text-accent hover:underline mr-3">
@@ -130,14 +129,8 @@
 
 </div>
 
-
-
-{{-- ========================================================= --}}
-{{-- ===================== MODAL ADD PRODUK ================== --}}
-{{-- ========================================================= --}}
-
 <div id="addProdukModal"
-     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center overflow-y-auto">
 
     <div class="relative p-4 w-full max-w-xl">
         <div class="relative bg-primary rounded-lg shadow border border-border p-6">
@@ -178,7 +171,7 @@
                         <select name="kategori_id"
                             class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" required>
                             @foreach($kategori as $k)
-                                <option class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" value="{{ $k->id }}">{{ $k->nama_katgori }}</option>
+                                <option class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" value="{{ $k->id }}">{{ $k->nama_kategori }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -216,15 +209,9 @@
     </div>
 </div>
 
-
-
-{{-- ========================================================= --}}
-{{-- ===================== MODAL EDIT PRODUK ================= --}}
-{{-- ========================================================= --}}
-
 @foreach($produks as $p)
 <div id="editProdukModal{{ $p->id }}"
-     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center overflow-y-auto">
 
     <div class="relative p-4 w-full max-w-xl">
         <div class="relative bg-primary rounded-lg shadow border border-border p-6">
@@ -237,7 +224,7 @@
                 </button>
             </div>
 
-            <form action="{{ route('produk.update') }}" method="POST">
+            <form action="{{ route('produk.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method("PUT")
 
@@ -245,51 +232,87 @@
 
                 <div class="grid gap-4">
 
+                    {{-- Nama Produk --}}
                     <div>
                         <label class="text-sm font-medium">Nama Produk</label>
                         <input type="text" name="nama_produk"
-                            value="{{ $p->nama_produk }}"
-                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" required>
+                               class="bg-background border border-border rounded-lg w-full p-2.5 text-sm"
+                               value="{{ $p->nama_produk }}" required>
                     </div>
 
+                    {{-- Harga --}}
                     <div>
-                        <label class="text-sm font-medium">Harga Produk</label>
+                        <label class="text-sm font-medium">Harga</label>
                         <input type="number" name="harga_produk"
-                            value="{{ $p->harga_produk }}"
-                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" required>
+                               class="bg-background border border-border rounded-lg w-full p-2.5 text-sm"
+                               value="{{ $p->harga_produk }}" required>
                     </div>
 
+                    {{-- Stok --}}
                     <div>
                         <label class="text-sm font-medium">Stok</label>
                         <input type="number" name="stok"
-                            value="{{ $p->stok }}"
-                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" required>
+                               class="bg-background border border-border rounded-lg w-full p-2.5 text-sm"
+                               value="{{ $p->stok }}" required>
                     </div>
 
+                    {{-- Kategori --}}
                     <div>
                         <label class="text-sm font-medium">Kategori</label>
                         <select name="kategori_id"
-                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm" required>
+                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm">
                             @foreach($kategori as $k)
-                                <option value="{{ $k->id }}" {{ $k->id == $p->kategori_id ? 'selected' : '' }}>
-                                    {{ $k->nama_katgori }}
+                                <option value="{{ $k->id }}" 
+                                        {{ $k->id == $p->kategori_id ? 'selected' : '' }}>
+                                    {{ $k->nama_kategori }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
+                    {{-- ========= GAMBAR LAMA ========= --}}
+                    <div>
+                        <label class="text-sm font-medium">Gambar Lama</label>
+                        <div class="flex flex-wrap gap-3 mt-2">
+
+                            @foreach($p->Gambar as $g)
+                            <div class="relative">
+                                <img src="{{ asset('storage/imageproduk/'.$g->path_gambar) }}"
+                                     class="w-20 h-20 object-cover rounded border border-border">
+
+                                <a href="{{ route('member.gambar.delete', $g->id) }}"
+                                   onclick="return confirm('Hapus gambar ini?')"
+                                   class="absolute -top-2 -right-2 bg-red-600 text-white w-6 h-6 rounded-full 
+                                          flex items-center justify-center text-xs shadow">
+                                    ✕
+                                </a>
+                            </div>
+                            @endforeach
+
+                        </div>
+                    </div>
+
+                    {{-- ========= TAMBAH GAMBAR BARU ========= --}}
+                    <div>
+                        <label class="text-sm font-medium">Tambah Gambar Baru</label>
+                        <input type="file" name="gambar_produk[]" multiple
+                               class="bg-background border border-border rounded-lg w-full p-2.5 text-sm">
+                        <p class="text-xs text-textSecondary">Bisa upload lebih dari 1 gambar.</p>
+                    </div>
+
+                    {{-- Deskripsi --}}
                     <div>
                         <label class="text-sm font-medium">Deskripsi Produk</label>
                         <textarea name="deskripsi_produk"
-                            class="bg-background border border-border rounded-lg w-full p-2.5 text-sm"
-                            rows="3">{{ $p->deskripsi_produk }}</textarea>
+                                  class="bg-background border border-border rounded-lg w-full p-2.5 text-sm"
+                                  rows="3">{{ $p->deskripsi_produk }}</textarea>
                     </div>
 
                 </div>
 
                 <div class="flex justify-end mt-6 gap-3">
                     <button type="button" onclick="closeEditProduk({{ $p->id }})"
-                        class="px-4 py-2 bg-background border border-border rounded-lg text-sm">
+                            class="px-4 py-2 bg-background border border-border rounded-lg text-sm">
                         Tutup
                     </button>
 
@@ -306,11 +329,6 @@
 </div>
 @endforeach
 
-
-
-{{-- ========================================================= --}}
-{{-- ===================== MODAL DELETE ======================= --}}
-{{-- ========================================================= --}}
 
 @foreach($produks as $p)
 <div id="deleteProdukModal{{ $p->id }}"
@@ -337,7 +355,7 @@
                     Batal
                 </button>
 
-                <a href="{{ route('produk.delete', $p->id) }}"
+                <a href="{{ route('member.gambar.delete', $p->id) }}"
                     class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700">
                     Ya, hapus
                 </a>
@@ -349,10 +367,6 @@
 </div>
 @endforeach
 
-
-{{-- ========================================================= --}}
-{{-- ===================== JAVASCRIPT ========================= --}}
-{{-- ========================================================= --}}
 <script>
 
 setTimeout(() => {

@@ -8,12 +8,9 @@
     {{-- TAILWIND --}}
     <script src="https://cdn.tailwindcss.com"></script>
 
-    {{-- ICONS --}}
+    {{-- LUCIDE --}}
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    {{-- =========================
-         CSS THEME VARIABLES — SAMAKAN DENGAN ADMIN
-       ========================= --}}
     <style>
         :root {
             --primary: #ffffff;
@@ -26,7 +23,7 @@
             --border: #e5e7eb;
         }
 
-        /* DARK MODE — sama 100% dengan admin */
+        /* DARK MODE */
         @media (prefers-color-scheme: dark) {
             :root {
                 --primary: #1f2937;
@@ -46,7 +43,7 @@
         }
     </style>
 
-    {{-- ============ EXTEND TAILWIND COLORS ============ --}}
+    {{-- EXTEND TAILWIND COLORS --}}
     <script>
         tailwind.config = {
             theme: {
@@ -66,7 +63,7 @@
         }
     </script>
 
-    {{-- CUSTOM UTILITY CLASS --}}
+    {{-- CUSTOM UTILITIES --}}
     <style type="text/tailwindcss">
         @layer utilities {
             .bg-primary { background-color: var(--primary); }
@@ -83,34 +80,44 @@
         }
     </style>
 </head>
-
 <body class="bg-background">
 
 <script>
-    let openSidebar = true;
+    let isSidebarOpen = true;
+    let isMobileSidebarOpen = false;
 
     function toggleSidebar() {
-        openSidebar = !openSidebar;
+        isSidebarOpen = !isSidebarOpen;
 
-        const sidebar = document.getElementById('sidebar');
-        const labels = document.querySelectorAll(".menu-label");
+        const sidebar = document.getElementById('sidebarDesktop');
+        const labels = document.querySelectorAll('.menu-label');
 
-        sidebar.classList.toggle("w-[260px]");
-        sidebar.classList.toggle("w-[80px]");
-        labels.forEach(l => l.classList.toggle("hidden"));
+        sidebar.classList.toggle('w-[280px]');
+        sidebar.classList.toggle('w-[80px]');
+        labels.forEach(l => l.classList.toggle('hidden'));
+    }
+
+    function toggleSidebarMobile() {
+        isMobileSidebarOpen = !isMobileSidebarOpen;
+
+        document.getElementById('sidebarMobile').classList.toggle('-translate-x-full');
+        document.getElementById('mobileOverlay').classList.toggle('hidden');
     }
 </script>
 
 <div class="flex h-screen">
 
-    {{-- ============ SIDEBAR ============ --}}
-    <aside id="sidebar"
-        class="hidden md:flex flex-col w-[260px] bg-primary border-r border-border transition-all duration-300">
+    {{-- SIDEBAR DESKTOP --}}
+    <aside 
+        id="sidebarDesktop"
+        class="hidden md:flex flex-col w-[280px] bg-primary border-r border-border transition-all duration-300">
 
-        <div class="h-16 px-5 flex items-center justify-between border-b border-border">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border">
             <div class="flex items-center gap-2 menu-label">
-                <i data-lucide="user" class="w-6 h-6 text-primary"></i>
-                <span class="font-bold text-lg text-primary">Member Panel</span>
+                <div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                    <i data-lucide="user" class="w-5 h-5 text-background"></i>
+                </div>
+                <span class="text-lg font-bold text-primary">Member Panel</span>
             </div>
 
             <button onclick="toggleSidebar()" class="p-2">
@@ -119,23 +126,19 @@
         </div>
 
         <nav class="flex-1 overflow-y-auto p-2">
-
             @php
-                $toko = Auth::user()->Toko;
+                $toko = Auth::user()->Toko ?? null;
                 $status = $toko ? $toko->status : null;
 
-                // MENU DEFAULT — SELALU ADA
                 $menus = [
                     ['route' => 'member.dashboard', 'icon' => 'layout-dashboard', 'label' => 'Dashboard'],
                     ['route' => 'user.dashboard', 'icon' => 'home', 'label' => 'Publik Home'],
                 ];
 
-                // JIKA TOKO ACTIVE — TAMBAHKAN MENU LAIN
                 if ($status === 'active') {
                     $menus = array_merge($menus, [
                         ['route' => 'member.prodak', 'icon' => 'box', 'label' => 'Products'],
                         ['route' => 'member.kategori', 'icon' => 'layers', 'label' => 'Kategori'],
-                        ['route' => 'member.gambar', 'icon' => 'image', 'label' => 'Gambar'],
                     ]);
                 }
             @endphp
@@ -143,35 +146,70 @@
             @foreach($menus as $m)
                 <a href="{{ route($m['route']) }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition
-                    {{ request()->routeIs($m['route']) 
-                        ? 'bg-secondary text-background'
-                        : 'hover:bg-secondary/10 text-primary'
-                    }}">
+                    {{ request()->routeIs($m['route']) ? 'bg-secondary text-background' : 'hover:bg-secondary/10 text-primary' }}">
                     <i data-lucide="{{ $m['icon'] }}" class="w-5 h-5"></i>
                     <span class="menu-label">{{ $m['label'] }}</span>
                 </a>
             @endforeach
 
             <a href="{{ route('logout') }}"
-                class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-100 rounded-lg mt-4">
-                <i data-lucide="log-out"></i>
+                class="flex items-center gap-3 px-4 py-3 text-red-500 mt-4 hover:bg-red-100 rounded-lg">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
                 <span class="menu-label">Logout</span>
             </a>
-
         </nav>
 
-        <div class="text-center p-4 text-xs border-t border-border menu-label text-primary/60">
+        <div class="p-4 text-center text-primary/60 text-xs border-t border-border menu-label">
             © {{ date('Y') }} Member Panel
         </div>
     </aside>
 
-    {{-- ============ MAIN CONTENT ============ --}}
+    {{-- MOBILE OVERLAY --}}
+    <div id="mobileOverlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-md z-40 md:hidden"
+         onclick="toggleSidebarMobile()"></div>
+
+    {{-- SIDEBAR MOBILE --}}
+    <aside 
+        id="sidebarMobile"
+        class="md:hidden fixed top-0 left-0 w-[280px] h-full bg-primary border-r border-border -translate-x-full transition z-50">
+
+        <div class="h-16 px-6 flex items-center justify-between border-b border-border">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                    <i data-lucide="user" class="w-5 h-5 text-background"></i>
+                </div>
+                <span class="text-lg font-bold text-primary">Member Panel</span>
+            </div>
+
+            <button onclick="toggleSidebarMobile()" class="p-2">
+                <i data-lucide="x" class="w-6 h-6 text-primary"></i>
+            </button>
+        </div>
+
+        <nav class="p-4">
+            @foreach($menus as $m)
+                <a href="{{ route($m['route']) }}"
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition
+                    {{ request()->routeIs($m['route']) ? 'bg-secondary text-background' : 'hover:bg-secondary/10 text-primary' }}">
+                    <i data-lucide="{{ $m['icon'] }}" class="w-5 h-5"></i>
+                    {{ $m['label'] }}
+                </a>
+            @endforeach
+
+            <a href="{{ route('logout') }}" class="flex items-center gap-3 px-4 py-3 text-red-500 mt-4 hover:bg-red-100 rounded-lg">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                Logout
+            </a>
+        </nav>
+
+    </aside>
+
+    {{-- MAIN CONTENT --}}
     <div class="flex-1 flex flex-col overflow-hidden">
 
-        {{-- TOP NAV --}}
-        <header class="h-16 flex items-center justify-between px-6 border-b border-border bg-surface/80 backdrop-blur-lg">
+        <header class="h-16 px-6 flex items-center justify-between border-b border-border bg-surface/80 backdrop-blur-lg">
             <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="p-2 md:hidden">
+                <button class="md:hidden p-2 rounded-lg hover:bg-primary" onclick="toggleSidebarMobile()">
                     <i data-lucide="menu" class="w-6 h-6 text-primary"></i>
                 </button>
 
@@ -181,13 +219,12 @@
                 </div>
             </div>
 
-            <div class="flex gap-4">
+            {{-- <div class="flex items-center gap-3">
                 <i data-lucide="bell" class="w-5 h-5 text-primary"></i>
                 <i data-lucide="user" class="w-5 h-5 text-primary"></i>
-            </div>
+            </div> --}}
         </header>
 
-        {{-- CONTENT --}}
         <main class="flex-1 overflow-y-auto p-6 bg-background">
             <div class="max-w-7xl mx-auto">
                 @yield('content')
@@ -198,7 +235,9 @@
 
 </div>
 
-<script> lucide.createIcons(); </script>
+<script>
+    lucide.createIcons();
+</script>
 
 </body>
 </html>

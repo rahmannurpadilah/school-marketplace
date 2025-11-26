@@ -89,6 +89,7 @@
         <thead class="bg-background border-y border-border">
             <tr>
                 <th class="px-6 py-3 font-medium">No</th>
+                <th class="px-6 py-3 font-medium">Gambar Toko</th>
                 <th class="px-6 py-3 font-medium">Nama Toko</th>
                 <th class="px-6 py-3 font-medium">Owner</th>
                 <th class="px-6 py-3 font-medium">Kontak</th>
@@ -107,13 +108,17 @@
                 data-status="{{ $t->status }}">
 
                 <td class="px-6 py-4">{{ $no++ }}</td>
+                <td class="px-6 py-4">
+                    <img src="{{ asset('storage/logotoko/'.$t->gambar) }}"
+                         class="w-12 h-12 rounded object-cover border border-border">
+                </td>
                 <td class="px-6 py-4">{{ $t->nama_toko }}</td>
                 <td class="px-6 py-4">{{ $t->user->name }}</td>
                 <td class="px-6 py-4">{{ $t->kontak_toko }}</td>
                 <td class="px-6 py-4">{{ $t->alamat }}</td>
 
                 <td class="px-6 py-4 font-semibold text-textSecondary">
-                    {{ $t->status }}
+                    {{ $t->status === "active" ? "aktif" : $t->status}}
                 </td>
 
                 <td class="px-6 py-4 text-center flex items-center justify-center gap-3">
@@ -156,7 +161,6 @@
 
 
 
-{{-- =============== MODAL ADD ================= --}}
 <div id="addModal"
     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
 
@@ -240,7 +244,6 @@
 
 
 
-{{-- =============== MODAL EDIT (PER DATA) ================= --}}
 @foreach($tokos as $t)
 <div id="editModal{{ $t->id }}"
     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
@@ -333,7 +336,6 @@
 
 
 
-{{-- =============== MODAL DELETE ================= --}}
 @foreach($tokos as $t)
 <div id="deleteModal{{ $t->id }}"
     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">

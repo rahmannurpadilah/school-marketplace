@@ -90,32 +90,47 @@ class memberController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'id' => 'required',
-            'nama_toko' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'logo_toko' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'id'         => 'required',
+            'nama_toko'  => 'required|string|max:255',
+            'deskripsi'  => 'required|string',
+            'logo_toko'  => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $toko = Toko::findOrFail($request->id);
 
+        // Folder penyimpanan logo
+        $folderPath = public_path('storage/logotoko');
+
+        // Nama file lama
         $fileName = $toko->gambar;
 
+        // Jika ada upload logo baru
         if ($request->hasFile('logo_toko')) {
-            if ($toko->gambar && file_exists(public_path('storage/image/'.$toko->gambar))) {
-                unlink(public_path('storage/image/'.$toko->gambar));
+
+            // Hapus file lama jika ada
+            if ($toko->gambar && file_exists($folderPath . '/' . $toko->gambar)) {
+                unlink($folderPath . '/' . $toko->gambar);
             }
 
+            // Upload file baru
             $file = $request->file('logo_toko');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/image'), $fileName);
+            $file->move($folderPath, $fileName);
         }
 
+        // Update data toko
         $toko->update([
             'nama_toko' => $request->nama_toko,
             'deskripsi' => $request->deskripsi,
-            'gambar'    => $fileName
+            'gambar'    => $fileName,
         ]);
 
-        return back()->with('success','Toko berhasil diperbarui!');
+        // Jika sebelumnya ditolak → update jadi pending
+        if ($toko->status == 'ditolak') {
+            $toko->update(['status' => 'pending']);
+        }
+
+        return back()->with('success', 'Toko berhasil diperbarui!');
     }
+
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('gambars', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('produk_id')->references('id')->on('produks');
+            $table->foreignId('produk_id')->references('id')->on('produks')->cascadeOnDelete();
             $table->string('path_gambar');
             $table->timestamps();
         });

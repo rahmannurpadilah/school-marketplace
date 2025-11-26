@@ -103,17 +103,12 @@
     }
 </script>
 
-{{-- ===========================================================
-     HEADER
-=========================================================== --}}
 <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white fixed w-full top-0 shadow-lg z-50">
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex justify-between items-center">
 
-            {{-- LOGO --}}
             <h1 class="text-xl md:text-2xl font-bold tracking-wide">R-Store</h1>
 
-            {{-- DESKTOP NAV --}}
             <nav class="hidden md:flex space-x-8">
                 <a href="{{ route('user.dashboard') }}"
                    class="font-medium transition hover:text-blue-100 {{ request()->is('/') ? 'text-black' : 'text-white' }}">
@@ -137,10 +132,10 @@
                             Dashboard
                         </a>                        
                     @else
-                    <a href="{{ route('member.dashboard') }}"
-                       class="font-medium transition hover:text-blue-100">
-                        Dashboard
-                    </a>                        
+                        <a href="{{ route('member.dashboard') }}"
+                        class="font-medium transition hover:text-blue-100">
+                            Dashboard
+                        </a>                        
                     @endif                    
                 @else
                     <a href="{{ route('login') }}"
@@ -150,13 +145,11 @@
                 @endif
             </nav>
 
-            {{-- MOBILE TOGGLER --}}
             <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg hover:bg-blue-500">
                 <i data-lucide="menu" class="w-6 h-6 text-white"></i>
             </button>
         </div>
 
-        {{-- MOBILE NAV --}}
         <div id="mobileMenu"
              class="hidden opacity-0 -translate-y-3 transition-all duration-300 mt-4 pb-4 md:hidden border-t border-blue-400 pt-4 space-y-4">
 
@@ -180,16 +173,10 @@
     </div>
 </header>
 
-{{-- ===========================================================
-     MAIN CONTENT
-=========================================================== --}}
-<main class="min-h-screen pt-28 pb-14 bg-background">
+<main class="min-h-screen pt-[66px] pb-14 bg-background">
     @yield('user-content')
 </main>
 
-{{-- ===========================================================
-     FOOTER
-=========================================================== --}}
 <footer class="bg-gradient-to-r from-blue-600 to-blue-700 text-white mt-16">
     <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-8">
 
@@ -202,10 +189,10 @@
         <div>
             <h4 class="text-xl font-bold">Navigasi Cepat</h4>
             <ul class="space-y-2 mt-2 text-blue-100">
-                <li><a href="/" class="hover:text-white">Beranda</a></li>
-                <li><a href="/produk" class="hover:text-white">Produk</a></li>
-                <li><a href="/toko" class="hover:text-white">Toko</a></li>
-                <li><a href="/login" class="hover:text-white">Login</a></li>
+                <li><a href={{ route('user.dashboard') }} class="hover:text-white">Beranda</a></li>
+                <li><a href={{ route('produk.index') }} class="hover:text-white">Produk</a></li>
+                <li><a href={{ route('toko.index') }} class="hover:text-white">Toko</a></li>
+                {{-- <li><a href="/login" class="hover:text-white">Login</a></li> --}}
             </ul>
         </div>
 

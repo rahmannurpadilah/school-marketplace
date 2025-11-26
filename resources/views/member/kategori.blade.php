@@ -6,7 +6,6 @@
 
 <div class="bg-primary shadow-sm rounded-xl border border-border overflow-hidden">
 
-    {{-- ================== ALERT SUCCESS ================== --}}
     @if (session('success'))
     <div id="alertSuccess"
         class="flex items-center justify-between bg-green-500/20 text-green-700 border border-green-500 rounded-lg px-4 py-3 mb-4 animate-fade">
@@ -18,7 +17,6 @@
     </div>
     @endif
 
-    {{-- ================== ALERT ERROR ================== --}}
     @if (session('error'))
     <div id="alertError"
         class="flex items-center justify-between bg-red-500/20 text-red-600 border border-red-500 rounded-lg px-4 py-3 mb-4 animate-fade">
@@ -30,10 +28,8 @@
     </div>
     @endif
 
-    {{-- ================= SEARCH ONLY ================= --}}
     <div class="p-4 flex items-center gap-4 justify-between">
 
-        {{-- SEARCH --}}
         <div class="relative w-full max-w-md">
             <span class="absolute inset-y-0 left-3 flex items-center text-textPrimary/60">
                 <i data-lucide="search" class="w-4 h-4"></i>
@@ -46,10 +42,8 @@
                 onkeyup="filterKategori()">
         </div>
 
-        {{-- NO BUTTON ADD FOR MEMBER --}}
     </div>
 
-    {{-- ================= TABLE ================= --}}
     <table class="w-full text-sm text-left">
 
         <thead class="bg-background border-y border-border">
@@ -78,7 +72,6 @@
 
 <script>
 
-    // Auto close alerts
     setTimeout(() => {
         let s = document.getElementById('alertSuccess');
         let e = document.getElementById('alertError');

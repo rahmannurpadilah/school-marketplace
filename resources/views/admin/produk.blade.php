@@ -57,12 +57,6 @@
             >
         </div>
 
-        {{-- ADD PRODUK --}}
-        <button onclick="openAddProduk()"
-            class="bg-secondary text-background px-4 py-2 rounded-lg text-sm hover:bg-secondary/90">
-            + Tambah Produk
-        </button>
-
     </div>
 
     {{-- ================= TABLE ================= --}}

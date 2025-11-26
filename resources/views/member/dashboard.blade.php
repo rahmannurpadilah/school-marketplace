@@ -3,7 +3,6 @@
 
 @section('content')
 
-{{-- ALERT SUCCESS --}}
 @if (session('success'))
 <div id="alertSuccess"
     class="flex items-center justify-between bg-green-500/20 text-green-700 border border-green-500 
@@ -17,7 +16,6 @@
 </div>
 @endif
 
-{{-- ALERT ERROR --}}
 @if (session('error'))
 <div id="alertError"
     class="flex items-center justify-between bg-red-500/20 text-red-600 border border-red-500 
@@ -44,8 +42,6 @@
     $jumlahKategori = \App\Models\Kategori::count();
 @endphp
 
-
-{{-- ===================== BELUM PUNYA TOKO ===================== --}}
 @if (!$toko)
 
 <div class="bg-primary border border-border rounded-xl p-8 shadow-md text-center">
@@ -59,18 +55,12 @@
     </button>
 </div>
 
-
-
-{{-- ===================== STATUS: PENDING ===================== --}}
 @elseif ($toko->status === 'pending')
 
 <div class="bg-blue-500/20 border border-blue-500 text-blue-700 rounded-lg px-4 py-3 mb-6">
     <strong>Info:</strong> Toko Anda sedang dalam proses peninjauan. Harap tunggu beberapa saat.
 </div>
 
-
-
-{{-- ===================== STATUS: DITOLAK ===================== --}}
 @elseif ($toko->status === 'ditolak')
 
 <div class="bg-red-500/20 border border-red-500 text-red-600 rounded-lg px-4 py-3 mb-4">
@@ -83,16 +73,14 @@
 
 
 
-{{-- ===================== STATUS: ACTIVE ===================== --}}
 @else
 
-{{-- PROFIL TOKO --}}
-<div class="bg-primary border border-border rounded-xl shadow-md p-6 mb-6 flex justify-between">
+<div class="bg-primary border border-border rounded-xl shadow-md p-6 mb-6 flex justify-between items-center">
 
     <div class="flex gap-4">
         <div>
             @if ($toko->gambar)
-                <img src="{{ asset('storage/image/'.$toko->gambar) }}"
+                <img src="{{ asset('storage/logotoko/'.$toko->gambar) }}"
                     class="w-24 h-24 rounded-full object-cover border border-border shadow">
             @else
                 <img src="https://via.placeholder.com/100"
@@ -103,6 +91,10 @@
         <div>
             <h3 class="text-2xl font-bold text-textPrimary">{{ $toko->nama_toko }}</h3>
             <p class="text-textPrimary/70 mt-1 max-w-xl">{{ $toko->deskripsi }}</p>
+            <p class="text-textPrimary/70 mt-1 max-w-xl text-sm items-center flex gap-2">
+                <i data-lucide="phone-incoming" class="w-4 h-4"></i>
+                {{ $toko->kontak_toko }}
+            </p>
         </div>
     </div>
 
@@ -113,10 +105,8 @@
 </div>
 
 
-{{-- ===================== STATISTIK ===================== --}}
 <div class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
 
-    {{-- CARD: PRODUK --}}
     <div class="bg-primary border border-border rounded-xl shadow-md p-6 flex items-center justify-between 
                 hover:shadow-lg transition duration-300">
 
@@ -130,7 +120,6 @@
         </div>
     </div>
 
-    {{-- CARD: GAMBAR --}}
     <div class="bg-primary border border-border rounded-xl shadow-md p-6 flex items-center justify-between 
                 hover:shadow-lg transition duration-300">
 
@@ -144,7 +133,6 @@
         </div>
     </div>
 
-    {{-- CARD: KATEGORI --}}
     <div class="bg-primary border border-border rounded-xl shadow-md p-6 flex items-center justify-between 
                 hover:shadow-lg transition duration-300">
 
@@ -162,9 +150,6 @@
 
 @endif
 
-
-
-{{-- ===================== MODAL CREATE TOKO ===================== --}}
 <div id="createTokoModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
 
     <div class="bg-primary border border-border rounded-xl shadow-xl w-full max-w-2xl p-6">
@@ -218,9 +203,6 @@
 
 </div>
 
-
-
-{{-- ===================== MODAL EDIT TOKO ===================== --}}
 @if ($toko)
 <div id="EditToko" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
 
@@ -275,9 +257,6 @@
 </div>
 @endif
 
-
-
-{{-- ===================== JAVASCRIPT ===================== --}}
 <script>
 
 setTimeout(() => {
